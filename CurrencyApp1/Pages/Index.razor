@@ -1,0 +1,203 @@
+﻿@page "/rates"
+@inject CurrencyService CurrencyService
+
+<PageTitle>Курсы валют — НБ РК</PageTitle>
+
+<!-- Заголовок -->
+<div class="d-flex align-center gap-3 mb-1">
+    <MudText Typo="Typo.h4" Style="font-weight:700;">
+        Курсы валют НБ РК
+    </MudText>
+    <MudImage Src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Flag_of_Kazakhstan.svg/40px-Flag_of_Kazakhstan.svg.png"
+              Width="40" Height="26" Style="border-radius:3px; box-shadow:0 1px 4px rgba(0,0,0,0.2);" />
+</div>
+<MudText Typo="Typo.body2" Class="mb-4" Style="color:#666;">
+    Официальные курсы Национального Банка Республики Казахстан. Все курсы в <strong>тенге (₸)</strong>.
+</MudText>
+
+<!-- Панель управления -->
+<MudPaper Class="pa-4 mb-4" Elevation="2" Style="border-radius:12px;">
+    <MudGrid AlignItems="AlignItems.Center" Spacing="3">
+
+        <!-- Поиск -->
+        <MudItem xs="12" sm="8" md="9">
+            <MudTextField @bind-Value="_search"
+                          Label="Поиск по коду или названию (USD, Евро, рубль...)"
+                          Variant="Variant.Outlined"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          Clearable="true"
+                          Dense="true" />
+        </MudItem>
+
+        <!-- Кнопка обновить -->
+        <MudItem xs="12" sm="4" md="3">
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       FullWidth="true"
+                       OnClick="LoadRates"
+                       StartIcon="@Icons.Material.Filled.Refresh"
+                       Disabled="_loading"
+                       Style="height:56px; border-radius:8px;">
+                @if (_loading)
+                {
+                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Color="Color.Inherit" Class="mr-2" />
+                    <span>Загрузка...</span>
+                }
+                else
+                {
+                    <span>Обновить</span>
+                }
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+
+<!-- Статус -->
+@if (_pubDate != null)
+{
+    <MudPaper Class="pa-3 mb-3 d-flex align-center" Elevation="0"
+              Style="border-radius:8px; background:#e8f5e9; border-left:4px solid #43a047;">
+        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Class="mr-2" Size="Size.Small" />
+        <MudText Typo="Typo.body2">
+            Данные НБ РК от: <strong>@_pubDate</strong> &nbsp;|&nbsp;
+            Валют: <strong>@FilteredRates.Count()</strong>
+        </MudText>
+    </MudPaper>
+}
+
+<!-- Ошибка -->
+@if (_error != null)
+{
+    <MudAlert Severity="Severity.Error" Class="mb-3" ShowCloseIcon="true"
+              CloseIconClicked="() => _error = null">
+        <strong>Ошибка:</strong> @_error
+    </MudAlert>
+}
+
+@if (_loading)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-2" />
+}
+
+<!-- Таблица -->
+<MudPaper Elevation="3" Style="border-radius:12px; overflow:hidden;">
+    @* В Items передаем ВЕСЬ список FilteredRates, MudTable сама его порежет на страницы *@
+    <MudTable Items="@FilteredRates"
+              Hover="true"
+              Striped="true"
+              Loading="_loading"
+              RowsPerPage="7"
+              LoadingProgressColor="Color.Primary"
+              SortLabel="Сортировка"
+              Elevation="0">
+
+        <ToolBarContent>
+            <MudText Typo="Typo.h6" Style="font-weight:600;">
+                Официальные курсы к тенге (₸)
+            </MudText>
+        </ToolBarContent>
+
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortBy="new Func<NbrkRate, object>(x => x.Code)">Код</MudTableSortLabel></MudTh>
+            <MudTh>Название</MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<NbrkRate, object>(x => x.Rate)">Курс (₸)</MudTableSortLabel></MudTh>
+            <MudTh>За</MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<NbrkRate, object>(x => x.Change)">Изменение</MudTableSortLabel></MudTh>
+        </HeaderContent>
+
+        <RowTemplate>
+            <MudTd DataLabel="Код">
+                <div class="d-flex align-center gap-2">
+                    <span style="font-size:1.4rem;">@context.Flag</span>
+                    <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small">@context.Code</MudChip>
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Название">@context.Name</MudTd>
+            <MudTd DataLabel="Курс"><b>@context.Rate.ToString("N2") ₸</b></MudTd>
+            <MudTd DataLabel="За">за @context.Quantity @context.Code</MudTd>
+            <MudTd DataLabel="Изменение">
+                @if (context.Change > 0)
+                {
+                    <MudChip T="string" Color="Color.Success" Size="Size.Small" Icon="@Icons.Material.Filled.ArrowUpward">+@context.Change.ToString("N2")</MudChip>
+                }
+                else if (context.Change < 0)
+                {
+                    <MudChip T="string" Color="Color.Error" Size="Size.Small" Icon="@Icons.Material.Filled.ArrowDownward">@context.Change.ToString("N2")</MudChip>
+                }
+                else
+                {
+                    <MudText Color="Color.Default">—</MudText>
+                }
+            </MudTd>
+        </RowTemplate>
+
+        <NoRecordsContent>
+            <MudText Class="pa-4">Ничего не найдено</MudText>
+        </NoRecordsContent>
+
+        @* ВОТ ЭТОТ БЛОК ВЕРНЕТ СТРЕЛКИ *@
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new int[] { 3, 5, 7, 10 }"
+                           RowsPerPageString="Строк на странице:"
+                           InfoFormat="{first_item}-{last_item} из {all_items}" />
+        </PagerContent>
+    </MudTable>
+</MudPaper>
+<MudText Typo="Typo.caption" Class="mt-3 d-block text-center" Style="color:#aaa;">
+    Источник: <a href="https://nationalbank.kz" target="_blank">nationalbank.kz</a>
+    — Национальный Банк Республики Казахстан. Курсы обновляются ежедневно в рабочие дни.
+</MudText>
+
+@code {
+    private string _search = "";
+    private int _pageSize = 5;
+    private bool _loading = false;
+    private string? _error;
+    private string? _pubDate;
+
+    private List<NbrkRate> _rates = new();
+
+    private IEnumerable<NbrkRate> FilteredRates
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(_search))
+                return _rates;
+
+            return _rates.Where(r =>
+                r.Code.Contains(_search, StringComparison.OrdinalIgnoreCase) ||
+                r.Name.Contains(_search, StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRates();
+    }
+
+    private async Task LoadRates()
+    {
+        _loading = true;
+        _error = null;
+        StateHasChanged();
+
+        try
+        {
+            var (rates, date) = await CurrencyService.GetRatesAsync();
+            _rates = rates;
+            _pubDate = date;
+
+            if (_rates.Count == 0)
+                _error = "Данные получены, но список пустой. Попробуйте позже.";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}

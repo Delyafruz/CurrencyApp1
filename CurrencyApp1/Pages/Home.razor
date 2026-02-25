@@ -1,0 +1,100 @@
+﻿@page "/"
+
+<PageTitle>CurrencyRates — Главная</PageTitle>
+
+<div style="min-height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+
+    <!-- Заголовок -->
+    <div style="text-align: center; margin-bottom: 48px;">
+        <div style="font-size: 4rem; margin-bottom: 12px;">💱</div>
+        <MudText Typo="Typo.h3" Style="font-weight: 800; color: #1a237e;">CurrencyRates</MudText>
+        <MudText Typo="Typo.h6" Style="color: #888; font-weight: 400; margin-top: 8px;">
+            Актуальные курсы валют и криптовалют
+        </MudText>
+    </div>
+
+    <!-- Карточки -->
+    <MudGrid Justify="Justify.Center" Spacing="6" Style="max-width: 800px; width: 100%;">
+
+        <!-- Карточка Валюты -->
+        <MudItem xs="12" sm="6">
+            <MudPaper Elevation="4" Style="border-radius: 20px; overflow: hidden;" Class="pa-0">
+                <div style="background: linear-gradient(135deg, #1565c0, #1e88e5); padding: 32px; text-align: center;">
+                    <div style="font-size: 3.5rem;">🏦</div>
+                    <MudText Typo="Typo.h5" Style="color: white; font-weight: 700; margin-top: 8px;">
+                        Курсы валют
+                    </MudText>
+                    <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.8); margin-top: 4px;">
+                        Национальный Банк РК
+                    </MudText>
+                </div>
+                <div style="padding: 20px 24px; background: white;">
+                    <div class="d-flex align-center gap-2 mb-2">
+                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Size="Size.Small" />
+                        <MudText Typo="Typo.body2">39 официальных валют</MudText>
+                    </div>
+                    <div class="d-flex align-center gap-2 mb-2">
+                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Size="Size.Small" />
+                        <MudText Typo="Typo.body2">Курс в тенге (₸)</MudText>
+                    </div>
+                    <div class="d-flex align-center gap-2 mb-3">
+                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Size="Size.Small" />
+                        <MudText Typo="Typo.body2">Обновляется ежедневно</MudText>
+                    </div>
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               FullWidth="true"
+                               Size="Size.Large"
+                               Href="/rates"
+                               EndIcon="@Icons.Material.Filled.ArrowForward"
+                               Style="border-radius: 10px;">
+                        Открыть
+                    </MudButton>
+                </div>
+            </MudPaper>
+        </MudItem>
+
+        <!-- Карточка Крипто -->
+        <MudItem xs="12" sm="6">
+            <MudPaper Elevation="4" Style="border-radius: 20px; overflow: hidden;" Class="pa-0">
+                <div style="background: linear-gradient(135deg, #e65100, #ff6f00); padding: 32px; text-align: center;">
+                    <div style="font-size: 3.5rem;">₿</div>
+                    <MudText Typo="Typo.h5" Style="color: white; font-weight: 700; margin-top: 8px;">
+                        Криптовалюты
+                    </MudText>
+                    <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.8); margin-top: 4px;">
+                        Реальные цены с биржи
+                    </MudText>
+                </div>
+                <div style="padding: 20px 24px; background: white;">
+                    <div class="d-flex align-center gap-2 mb-2">
+                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Size="Size.Small" />
+                        <MudText Typo="Typo.body2">BTC, ETH, LTC, BNB</MudText>
+                    </div>
+                    <div class="d-flex align-center gap-2 mb-2">
+                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Size="Size.Small" />
+                        <MudText Typo="Typo.body2">Цена в USD и тенге (₸)</MudText>
+                    </div>
+                    <div class="d-flex align-center gap-2 mb-3">
+                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Size="Size.Small" />
+                        <MudText Typo="Typo.body2">Изменение за 24 часа</MudText>
+                    </div>
+                    <MudButton Variant="Variant.Filled"
+                               FullWidth="true"
+                               Size="Size.Large"
+                               Href="/crypto"
+                               EndIcon="@Icons.Material.Filled.ArrowForward"
+                               Style="border-radius: 10px; background: #e65100; color: white;">
+                        Открыть
+                    </MudButton>
+                </div>
+            </MudPaper>
+        </MudItem>
+
+    </MudGrid>
+
+    <MudText Typo="Typo.caption" Class="mt-6" Style="color: #bbb;">
+        Данные: НБ РК · CoinGecko API · Обновляется в реальном времени
+    </MudText>
+
+</div>
